@@ -70,7 +70,7 @@ function UploadImage() {
   const { showImage, showResults } = machine.states[appState];
 
   return (
-    <div className="body-wrapper custom-wrapper"> 
+    <div className="body-wrapper card-wrapper"> 
       {showImage && <img src={imageURL} alt="upload-preview" ref={imageRef} />}
       <input
         type="file"
