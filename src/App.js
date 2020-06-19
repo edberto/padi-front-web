@@ -42,7 +42,7 @@ class App extends Component {
   }
 
   componentDidMount(){
-    console.log(localStorage.getItem('auth-token'));
+    // console.log(localStorage.getItem('auth-token'));
   }
 
   render() {
