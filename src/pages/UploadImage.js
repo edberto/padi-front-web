@@ -1,6 +1,4 @@
 import React, { useState, useRef, useReducer, Component } from "react";
-// import * as mobilenet from '@tensorflow-models/mobilenet';
-import * as tf from '@tensorflow/tfjs';
 import axios from 'axios';
 import { BrowserRouter as Link } from "react-router-dom";
 
@@ -22,29 +20,6 @@ class UploadImage extends Component {
     this.onPhotoChange = this.onPhotoChange.bind(this);
   }
 
-  // onLogin = e => {
-  //   e.preventDefault();
-  //   axios.post(this.PROXY_URL + 'https://padi-bangkit.herokuapp.com/prediction', { username: this.state.username, password: this.state.password })
-  //     .then(response => {
-  //       console.log("masuk");
-  //       console.log(response);
-  //       if (response.data.message === "Success") {
-  //         console.log("Success");
-  //         localStorage.setItem('auth-token', response.data.data.access_token);
-  //         localStorage.setItem('username', this.state.username);
-  //         console.log("XXXXXX");
-  //         console.log(localStorage.getItem('auth-token'));
-  //         this.props.history.push('/');
-  //       }
-  //       else {
-  //         console.log("Wrong message");
-  //       }
-  //     })
-  //     .catch(error => {
-  //       console.log(error);
-  //     })
-  // }
-
   onPhotoChange = event => {
     if (event.target.files && event.target.files[0]) {
       let img = event.target.files[0];
@@ -56,20 +31,11 @@ class UploadImage extends Component {
 
   async componentDidMount() {
     console.log('First');
-    // console.log(require('../assets/model/model.json'))
-    // const model = await tf.loadLayersModel(require('../assets/model/model.json'))
-    // const model = await tf.load
+    
+    // const handler = tfn.io.fileSystem(require('../assets/model/model.json'))
+    // const model = await tf.loadLayersModel(handler)
+
     // console.log(model.inputLayers);
-    // const models = await tf.loadModel
-    // const models = await tf.loadModel(model);
-    // console.log(models.inputLayers);
-    // models.summary();
-    // this.loadModel();
-    // const model = await tf.loadGraphModel('model/model.json');
-    // this.setState({ model = tf.loadLayersModel('../assets/model/model.json')})
-    // const models = await tf.model.
-    // models.summary();
-    // this.setState({MODEL: models});
     console.log("Model Loaded");
   }
 

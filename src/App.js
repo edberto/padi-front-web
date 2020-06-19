@@ -10,7 +10,6 @@ import SignUp from "./pages/Signup";
 import UploadImage from "./pages/UploadImage";
 import History from "./pages/History";
 import Result from "./pages/Result";
-import Try from "./pages/Try";
 
 class App extends Component {
   logout() {
@@ -82,7 +81,6 @@ class App extends Component {
           <Route path="/register" component={SignUp} />
           <Route path="/history" component={History} />
           <Route path="/result" component={Result} />
-          <Route path="/try" component={Try} />
         </Switch>
 
         <div className="footer">
