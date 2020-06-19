@@ -26,8 +26,8 @@ class History extends Component {
                                 <img src={d.image_url} alt="Food" width='75%' />
                             </div>
                             <div className="col-sm-10">
-                                <div className="card w-75">
-                                    <div className="card-body" style={{'text-align': 'left'}}>
+                                <div className="card w-75" style={{'marginBottom': '0px'}}>
+                                    <div className="card-body" style={{'textAlign': 'left'}}>
                                         <h5 className="card-title">{d.datetime}</h5>
                                         <p className="card-text">{d.result}</p>
                                     </div>

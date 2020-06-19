@@ -10,6 +10,7 @@ class Result extends Component {
             isLoading: false,
             error: null,
         };
+        this.PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
     }
 
     // async componentDidMount() {
@@ -40,12 +41,7 @@ class Result extends Component {
     componentDidMount() {
         this.setState({ isLoading: true });
 
-        axios.get("https://padi-bangkit.herokuapp.com/condition/1", {
-            headers: {
-                "Access-Control-Allow-Origin": "*",
-                "Content-Type": "application/json"
-            }
-        })
+        axios.get(this.PROXY_URL + "https://padi-bangkit.herokuapp.com/condition/1")
             .then(result => this.setState({
                 resultPrediciton: result.data.resultPrediciton,
                 isLoading: false
@@ -54,12 +50,14 @@ class Result extends Component {
                 error,
                 isLoading: false
             }));
+
+        console.log(this.setState.resultPrediciton);
     }
 
     render() {
         return (
             <div className="card-wrapper">
-                <div className="container col-md-3 py-5 card-inner">
+                <div className="container col-md-4 py-5 card-inner">
                     <div className="card">
                         <div className="card-header">
                             <h4 className="mb-0">Result</h4>
