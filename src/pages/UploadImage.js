@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import axios from 'axios';
 import * as tf from '@tensorflow/tfjs';
+import { storage } from "../firebase"
 // import models from '../assets/model/model.json';
 
 class UploadImage extends Component {
@@ -9,7 +10,7 @@ class UploadImage extends Component {
 
     this.state = {
       isLoading: false,
-      image: null,
+      img_url: null,
       img_predict: null,
       models: null,
       isPredicted: false,
@@ -24,7 +25,6 @@ class UploadImage extends Component {
     if (event.target.files && event.target.files[0]) {
       let img = event.target.files[0];
       this.setState({
-        image: URL.createObjectURL(img),
         img_predict: img
       });
     }
@@ -38,55 +38,75 @@ class UploadImage extends Component {
 
   async pressButton(event) {
     event.preventDefault();
-    console.log('Handle uploading-', this.state.image);
+    console.log('Handle uploading-', this.state.img_predict);
 
-    const canvas = this.refs.canvas
-    const ctx = canvas.getContext("2d")
-    const img = this.state.img_predict
+    const canvas = this.ref.canvas;
 
-    img.onload = () => {
-      ctx.drawImage(this.state.img_predict, 0, 0, 256, 256)
-    }
-
-    console.log(img);
-
-    let logits = tf.tidy(() => {
-      const normalizationConstant = 1.0 / 255.0;
-
-      let image_test = tf.browser.fromPixels(img, 1)
-        .resizeBilinear([256, 256], false)
-        .expandDims(0)
-        .toFloat()
-        .mul(normalizationConstant)
-
-      return this.state.models.predict(image_test);
-    });
-
-    console.log(logits);
-
-    // await axios.post(this.PROXY_URL + 'https://padi-bangkit.herokuapp.com/prediction', { "image_path": this.state.image, "prediction": this.state.label },
-    //   {
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //       'Authorization': 'Bearer ' + localStorage.getItem('auth-token')
-    //     }
-    //   })
-    //   .then(response => {
-    //     console.log(response);
-    //     if (response.data.message === "Success") {
-    //       console.log("Success");
-    //       this.setState({ isPredicted: true })
-    //     }
-    //     else {
-    //       console.log("Wrong message");
-    //       this.setState({ isPredicted: false })
-    //     }
-    //   })
-    //   .catch(error => {
+    // const uploadTask = storage.ref(`images/${this.state.img_predict.name}`).put(this.state.img_predict);
+    // uploadTask.on(
+    //   "state_changed",
+    //   snapshot => { },
+    //   error => {
     //     console.log(error);
-    //     this.setState({ isPredicted: false })
-    //   })
+    //   },
+    //   () => {
+    //     storage
+    //       .ref("images")
+    //       .child(this.state.img_predict.name)
+    //       .getDownloadURL().
+    //       then(url => {
+    //         this.setState({ img_url: url });
+    //         axios.post(this.PROXY_URL + 'https://padi-bangkit.herokuapp.com/prediction', { "image_path": this.state.img_url, "prediction": this.state.label },
+    //           {
+    //             headers: {
+    //               'Content-Type': 'application/json',
+    //               'Authorization': 'Bearer ' + localStorage.getItem('auth-token')
+    //             }
+    //           })
+    //           .then(response => {
+    //             console.log(response);
+    //             if (response.data.message === "Success") {
+    //               console.log("Success");
+    //               this.setState({ isPredicted: true })
+    //             }
+    //             else {
+    //               console.log("Wrong message");
+    //               this.setState({ isPredicted: false })
+    //             }
+    //           })
+    //           .catch(error => {
+    //             console.log(error);
+    //             this.setState({ isPredicted: false })
+    //           })
+    //       });
+    //   }
+    // )
 
+    // console.log(this.state.img_url)
+
+    // const canvas = this.refs.canvas
+    // const ctx = canvas.getContext("2d")
+    // const img = this.state.img_predict
+
+    // this.state.img_predict.onload = () => {
+    //   ctx.drawImage(this.state.img_predict, 0, 0, 256, 256)
+    // }
+
+    // console.log(img);
+
+    // let logits = tf.tidy(() => {
+    //   const normalizationConstant = 1.0 / 255.0;
+
+    //   let image_test = tf.browser.fromPixels(this.state.img_predict, 1)
+    //     .resizeBilinear([256, 256], false)
+    //     .expandDims(0)
+    //     .toFloat()
+    //     .mul(normalizationConstant)
+
+    //   return this.state.models.predict(image_test);
+    // });
+
+    // console.log(logits);
     // this.generateResult();
 
     // console.log("Loading image...");
@@ -99,6 +119,10 @@ class UploadImage extends Component {
     // console.log(predictions);
   };
 
+  insertPredicton(){
+
+  }
+
   async generateResult() {
     axios.get(this.PROXY_URL + 'https://padi-bangkit.herokuapp.com/condition/' + this.state.label, {
       headers: {
@@ -106,11 +130,11 @@ class UploadImage extends Component {
       }
     })
       .then(response => {
-        console.log("generate result");
-        console.log(response.data.data);
+        // console.log("generate result");
+        // console.log(response.data.data);
         if (response.data.message === "Success") {
           this.setState({ detailPrediction: response.data.data })
-          console.log("Success");
+          // console.log("Success");
         }
         else {
           console.log("Wrong message");
@@ -139,7 +163,7 @@ class UploadImage extends Component {
                   <h4 className="mb-0">Result</h4>
                 </div>
                 <div className="card-body">
-                  <img src={this.state.image} className="card-img-top" />
+                  <img src={this.state.img_url} className="card-img-top" />
                   <p>{detailPrediction.label}</p>
                   <h6>Effect</h6>
                   <p>{detailPrediction.effect}</p>

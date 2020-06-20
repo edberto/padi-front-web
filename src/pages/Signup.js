@@ -19,10 +19,10 @@ export default class SignUp extends Component {
         e.preventDefault();
         axios.post(this.PROXY_URL + 'https://padi-bangkit.herokuapp.com/register', { username: this.state.username, password: this.state.password })
             .then(response => {
-                console.log("masuk");
-                console.log(response);
+                // console.log("masuk");
+                // console.log(response);
                 if (response.data.message === "Success") {
-                    console.log("Success")
+                    // console.log("Success")
                     this.props.history.push('/login');
                 }
                 else {

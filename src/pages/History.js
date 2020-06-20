@@ -41,7 +41,7 @@ class History extends Component {
     render() {
         return (
             <div className="body-wrapper">
-                <div className="container-fluid custom-wrapper">
+                <div className="container-fluid custom-wrapper" style={{'marginBottom':'100px'}}>
                     <h3>History</h3>
                     {this.state.fetchData.map((
                         d, index) => <div className="row history" key={index + 1}>
