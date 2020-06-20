@@ -71,7 +71,7 @@ class Result extends Component {
                             <p>Pertahankan kesehatan tanaman anda</p>
                             <h6>Prevention</h6>
                             <p>-</p>
-                            <Link to ="/"><button type="submit" className="btn btn-success">Back to Homepage</button></Link>
+                            {/* <Link to ="/"><button type="submit" className="btn btn-success">Back to Homepage</button></Link> */}
                         </div>
                     </div>
                 </div>

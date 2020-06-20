@@ -13,9 +13,8 @@ class UploadImage extends Component {
       img_predict: null,
       models: null,
       isPredicted: false,
-      label: 1,
-      detailPrediction: {},
-      jsonFile: null
+      label: Math.floor(Math.random() * 4) + 1,
+      detailPrediction: {}
     };
     this.PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
     this.onPhotoChange = this.onPhotoChange.bind(this);
@@ -26,86 +25,69 @@ class UploadImage extends Component {
       let img = event.target.files[0];
       this.setState({
         image: URL.createObjectURL(img),
-        img_predict : img
-      });
-    }
-  };
-
-  uploadJson = event => {
-    if (event.target.files && event.target.files[0]) {
-      let json = event.target.files[0];
-      this.setState({
-        jsonFile: json
+        img_predict: img
       });
     }
   };
 
   async componentDidMount() {
+    let loadModel = await tf.loadLayersModel(this.PROXY_URL + 'https://firebasestorage.googleapis.com/v0/b/padi-bangkit.appspot.com/o/model.json?alt=media')
+
+    this.setState({ models: loadModel });
   }
 
   async pressButton(event) {
     event.preventDefault();
     console.log('Handle uploading-', this.state.image);
 
-    let model = await tf.loadLayersModel(
-      tf.io.browserFiles([this.state.jsonFile]));
+    const canvas = this.refs.canvas
+    const ctx = canvas.getContext("2d")
+    const img = this.state.img_predict
 
-    this.setState({ models: model });
+    img.onload = () => {
+      ctx.drawImage(this.state.img_predict, 0, 0, 256, 256)
+    }
 
-    // this.state.models.predict(tf.zeros([null, 256, 256, 3])).dispose();
-    this.state.models.summary();
+    console.log(img);
 
-    // const canvas = createCanvas(this.state.img_predict.width, this.state.img_predict.height);
-    // const ctx = canvas.getContext('2d')
-    // console.log(this.state.img_predict.height);
-    // console.log(this.state.img_predict.width);
-    console.log(this.state.img_predict);
+    let logits = tf.tidy(() => {
+      const normalizationConstant = 1.0 / 255.0;
 
-    // let WIDTH = this.state.image_predict.dimension.width;
-    // let HEIGHT = this.state.image_predict.dimension.height;
+      let image_test = tf.browser.fromPixels(img, 1)
+        .resizeBilinear([256, 256], false)
+        .expandDims(0)
+        .toFloat()
+        .mul(normalizationConstant)
 
-    // let ctx = this.state.img_predict.getContext("2d");
-    // ctx.clearRect(0, 0, WIDTH, HEIGHT); // clear canvas
-    // ctx.drawImage(this.state.img_predict, 0, 0, WIDTH, HEIGHT)
+      return this.state.models.predict(image_test);
+    });
 
-    // let logits = tf.tidy(() => {
-    //   const normalizationConstant = 1.0 / 255.0;
-  
-    //   let img = tf.browser.fromPixels(this.state.img_predict, 1)
-    //     .resizeBilinear([256, 256], false)
-    //     .expandDims(0)
-    //     .toFloat()
-    //     .mul(normalizationConstant)
-  
-    //   return models.predict(img);
-    // });
+    console.log(logits);
 
-    // console.log(logits);
+    // await axios.post(this.PROXY_URL + 'https://padi-bangkit.herokuapp.com/prediction', { "image_path": this.state.image, "prediction": this.state.label },
+    //   {
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //       'Authorization': 'Bearer ' + localStorage.getItem('auth-token')
+    //     }
+    //   })
+    //   .then(response => {
+    //     console.log(response);
+    //     if (response.data.message === "Success") {
+    //       console.log("Success");
+    //       this.setState({ isPredicted: true })
+    //     }
+    //     else {
+    //       console.log("Wrong message");
+    //       this.setState({ isPredicted: false })
+    //     }
+    //   })
+    //   .catch(error => {
+    //     console.log(error);
+    //     this.setState({ isPredicted: false })
+    //   })
 
-    await axios.post(this.PROXY_URL + 'https://padi-bangkit.herokuapp.com/prediction', { "image_path": this.state.image, "prediction": this.state.label },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + localStorage.getItem('auth-token')
-        }
-      })
-      .then(response => {
-        console.log(response);
-        if (response.data.message === "Success") {
-          console.log("Success");
-          this.setState({ isPredicted: true })
-        }
-        else {
-          console.log("Wrong message");
-          this.setState({ isPredicted: false })
-        }
-      })
-      .catch(error => {
-        console.log(error);
-        this.setState({ isPredicted: false })
-      })
-
-    this.generateResult();
+    // this.generateResult();
 
     // console.log("Loading image...");
 
@@ -139,6 +121,10 @@ class UploadImage extends Component {
       })
   }
 
+  predict() {
+
+  }
+
   render() {
     const isPredicted = this.state.isPredicted;
     const detailPrediction = this.state.detailPrediction;
@@ -167,8 +153,8 @@ class UploadImage extends Component {
           </div>
         ) : (
             <div className="body-wrapper card-wrapper">
+              <canvas ref="canvas" width={256} height={256} />
               <input type="file" accept="image/*" capture="camera" onChange={this.onPhotoChange} />
-              <input type="file" onChange={this.uploadJson} />
               <button className="btn btn-success" onClick={(e) => this.pressButton(e)}>Predict</button>
             </div>
           )}

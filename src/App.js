@@ -77,6 +77,7 @@ class App extends Component {
                 <a aria-expanded="false" aria-haspopup="true" className="dropdown-toggle nav-link" data-toggle="dropdown"
                   href="" role="button">Username<span className="caret"></span></a>
                 <ul className="dropdown-menu">
+                  {/* <Link className="dropdown-item" to={"/"} onClick={this.logout}>Logout</Link> */}
                   <a className="dropdown-item" onClick={this.logout}>Logout</a>
                 </ul>
               </li>
