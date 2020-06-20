@@ -22,11 +22,11 @@ class History extends Component {
             }
         })
             .then(response => {
-                console.log("masuk");
-                console.log(response.data.data);
+                // console.log("masuk");
+                // console.log(response.data.data);
                 if (response.data.message === "Success") {
                     this.setState({ fetchData: response.data.data })
-                    console.log("Success");
+                    // console.log("Success");
                     console.log(this.state.fetchData);
                 }
                 else {
@@ -41,7 +41,6 @@ class History extends Component {
     render() {
         return (
             <div className="body-wrapper">
-                {/* {this.state.fetchData} */}
                 <div className="container-fluid custom-wrapper">
                     <h3>History</h3>
                     {this.state.fetchData.map((

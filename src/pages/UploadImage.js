@@ -1,20 +1,21 @@
-import React, { useState, useRef, useReducer, Component } from "react";
+import React, { Component } from "react";
 import axios from 'axios';
-import { BrowserRouter as Link } from "react-router-dom";
-
-// tf.setBackend('wasm').then(() => main());
+import * as tf from '@tensorflow/tfjs';
+// import models from '../assets/model/model.json';
 
 class UploadImage extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       isLoading: false,
       image: null,
-      label: null,
+      img_predict: null,
       models: null,
       isPredicted: false,
       label: 1,
-      detailPrediction: {}
+      detailPrediction: {},
+      jsonFile: null
     };
     this.PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
     this.onPhotoChange = this.onPhotoChange.bind(this);
@@ -24,24 +25,62 @@ class UploadImage extends Component {
     if (event.target.files && event.target.files[0]) {
       let img = event.target.files[0];
       this.setState({
-        image: URL.createObjectURL(img)
+        image: URL.createObjectURL(img),
+        img_predict : img
+      });
+    }
+  };
+
+  uploadJson = event => {
+    if (event.target.files && event.target.files[0]) {
+      let json = event.target.files[0];
+      this.setState({
+        jsonFile: json
       });
     }
   };
 
   async componentDidMount() {
-    console.log('First');
-    
-    // const handler = tfn.io.fileSystem(require('../assets/model/model.json'))
-    // const model = await tf.loadLayersModel(handler)
-
-    // console.log(model.inputLayers);
-    console.log("Model Loaded");
   }
 
   async pressButton(event) {
     event.preventDefault();
     console.log('Handle uploading-', this.state.image);
+
+    let model = await tf.loadLayersModel(
+      tf.io.browserFiles([this.state.jsonFile]));
+
+    this.setState({ models: model });
+
+    // this.state.models.predict(tf.zeros([null, 256, 256, 3])).dispose();
+    this.state.models.summary();
+
+    // const canvas = createCanvas(this.state.img_predict.width, this.state.img_predict.height);
+    // const ctx = canvas.getContext('2d')
+    // console.log(this.state.img_predict.height);
+    // console.log(this.state.img_predict.width);
+    console.log(this.state.img_predict);
+
+    // let WIDTH = this.state.image_predict.dimension.width;
+    // let HEIGHT = this.state.image_predict.dimension.height;
+
+    // let ctx = this.state.img_predict.getContext("2d");
+    // ctx.clearRect(0, 0, WIDTH, HEIGHT); // clear canvas
+    // ctx.drawImage(this.state.img_predict, 0, 0, WIDTH, HEIGHT)
+
+    // let logits = tf.tidy(() => {
+    //   const normalizationConstant = 1.0 / 255.0;
+  
+    //   let img = tf.browser.fromPixels(this.state.img_predict, 1)
+    //     .resizeBilinear([256, 256], false)
+    //     .expandDims(0)
+    //     .toFloat()
+    //     .mul(normalizationConstant)
+  
+    //   return models.predict(img);
+    // });
+
+    // console.log(logits);
 
     await axios.post(this.PROXY_URL + 'https://padi-bangkit.herokuapp.com/prediction', { "image_path": this.state.image, "prediction": this.state.label },
       {
@@ -129,111 +168,13 @@ class UploadImage extends Component {
         ) : (
             <div className="body-wrapper card-wrapper">
               <input type="file" accept="image/*" capture="camera" onChange={this.onPhotoChange} />
+              <input type="file" onChange={this.uploadJson} />
               <button className="btn btn-success" onClick={(e) => this.pressButton(e)}>Predict</button>
             </div>
           )}
       </div>
     );
-    // return (
-    //   <div className="body-wrapper card-wrapper">
-    //     <input type="file" accept="image/*" capture="camera" onChange={this.onPhotoChange} />
-    //     <button className="btn btn-success" onClick={(e) => this.pressButton(e)}>Predict</button>
-    //   </div>
-    // );
   }
 }
-
-// const machine = {
-//   initial: "initial",
-//   states: {
-//     initial: { on: { next: "loadingModel" } },
-//     loadingModel: { on: { next: "modelReady" } },
-//     modelReady: { on: { next: "imageReady" } },
-//     imageReady: { on: { next: "identifying" }, showImage: true },
-//     identifying: { on: { next: "complete" } },
-//     complete: { on: { next: "modelReady" }, showImage: true, showResults: true }
-//   }
-// };
-
-// function UploadImage() {
-//   const [results, setResults] = useState([]);
-//   const [imageURL, setImageURL] = useState(null);
-//   const [model, setModel] = useState(null);
-//   const imageRef = useRef();
-//   const inputRef = useRef();
-
-//   const reducer = (state, event) =>
-//     machine.states[state].on[event] || machine.initial;
-
-//   const [appState, dispatch] = useReducer(reducer, machine.initial);
-//   const next = () => dispatch("next");
-
-//   const loadModel = async () => {
-//     next();
-//     const model = await mobilenet.load();
-//     setModel(model);
-//     next();
-//   };
-
-//   const identify = async () => {
-//     next();
-//     const results = await model.classify(imageRef.current);
-//     setResults(results);
-//     next();
-//   };
-
-//   const reset = async () => {
-//     setResults([]);
-//     next();
-//   };
-
-//   const upload = () => inputRef.current.click();
-
-//   const handleUpload = event => {
-//     const { files } = event.target;
-//     if (files.length > 0) {
-//       const url = URL.createObjectURL(event.target.files[0]);
-//       setImageURL(url);
-//       next();
-//     }
-//   };
-
-//   const actionButton = {
-//     initial: { action: loadModel, text: "Load Model" },
-//     loadingModel: { text: "Loading Model..." },
-//     modelReady: { action: upload, text: "Upload Image" },
-//     imageReady: { action: identify, text: "Identify Breed" },
-//     identifying: { text: "Identifying..." },
-//     complete: { action: reset, text: "Reset" }
-//   };
-
-//   const { showImage, showResults } = machine.states[appState];
-
-//   return (
-//     <div className="body-wrapper card-wrapper">
-//       {showImage && <img src={imageURL} alt="upload-preview" ref={imageRef} />}
-//       <input
-//         type="file"
-//         accept="image/*"
-//         capture="camera"
-//         onChange={handleUpload}
-//         ref={inputRef}
-//       />
-//       {showResults && (
-//         <ul>
-//           {results.map(({ className, probability }) => (
-//             <li key={className}>{`${className}: %${(probability * 100).toFixed(
-//               2
-//             )}`}</li>
-//           ))}
-//         </ul>
-//       )}
-//       <button className="btn btn-success" onClick={actionButton[appState].action || (() => { })}>
-//         {actionButton[appState].text}
-//       </button>
-//     </div>
-//   );
-// }
-
 
 export default UploadImage;
