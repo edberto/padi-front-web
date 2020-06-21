@@ -32,7 +32,7 @@ class App extends Component {
         if (response.data.message === "Success") {
           localStorage.removeItem('auth-token');
           localStorage.removeItem('username');
-          this.setState({navigate: true})
+          // this.setState({navigate: true})
           // history.push('/login');
         }
         else {
@@ -49,11 +49,11 @@ class App extends Component {
   }
 
   render() {
-    const { navigate } = this.state
+    // const { navigate } = this.state
 
-    if (navigate) {
-      return <Redirect to="/login" push={true} />;
-    }
+    // if (navigate) {
+    //   return <Redirect to="/login" push={true} />;
+    // }
     
     return (<Router>
       <div className="App">

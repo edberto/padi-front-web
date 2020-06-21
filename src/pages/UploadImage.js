@@ -40,47 +40,47 @@ class UploadImage extends Component {
     event.preventDefault();
     console.log('Handle uploading-', this.state.img_predict);
 
-    const canvas = this.ref.canvas;
+    // const canvas = this.ref.canvas;
 
-    // const uploadTask = storage.ref(`images/${this.state.img_predict.name}`).put(this.state.img_predict);
-    // uploadTask.on(
-    //   "state_changed",
-    //   snapshot => { },
-    //   error => {
-    //     console.log(error);
-    //   },
-    //   () => {
-    //     storage
-    //       .ref("images")
-    //       .child(this.state.img_predict.name)
-    //       .getDownloadURL().
-    //       then(url => {
-    //         this.setState({ img_url: url });
-    //         axios.post(this.PROXY_URL + 'https://padi-bangkit.herokuapp.com/prediction', { "image_path": this.state.img_url, "prediction": this.state.label },
-    //           {
-    //             headers: {
-    //               'Content-Type': 'application/json',
-    //               'Authorization': 'Bearer ' + localStorage.getItem('auth-token')
-    //             }
-    //           })
-    //           .then(response => {
-    //             console.log(response);
-    //             if (response.data.message === "Success") {
-    //               console.log("Success");
-    //               this.setState({ isPredicted: true })
-    //             }
-    //             else {
-    //               console.log("Wrong message");
-    //               this.setState({ isPredicted: false })
-    //             }
-    //           })
-    //           .catch(error => {
-    //             console.log(error);
-    //             this.setState({ isPredicted: false })
-    //           })
-    //       });
-    //   }
-    // )
+    const uploadTask = storage.ref(`images/${this.state.img_predict.name}`).put(this.state.img_predict);
+    uploadTask.on(
+      "state_changed",
+      snapshot => { },
+      error => {
+        console.log(error);
+      },
+      () => {
+        storage
+          .ref("images")
+          .child(this.state.img_predict.name)
+          .getDownloadURL().
+          then(url => {
+            this.setState({ img_url: url });
+            axios.post(this.PROXY_URL + 'https://padi-bangkit.herokuapp.com/prediction', { "image_path": this.state.img_url, "prediction": this.state.label },
+              {
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ' + localStorage.getItem('auth-token')
+                }
+              })
+              .then(response => {
+                console.log(response);
+                if (response.data.message === "Success") {
+                  console.log("Success");
+                  this.setState({ isPredicted: true })
+                }
+                else {
+                  console.log("Wrong message");
+                  this.setState({ isPredicted: false })
+                }
+              })
+              .catch(error => {
+                console.log(error);
+                this.setState({ isPredicted: false })
+              })
+          });
+      }
+    )
 
     // console.log(this.state.img_url)
 
@@ -107,7 +107,7 @@ class UploadImage extends Component {
     // });
 
     // console.log(logits);
-    // this.generateResult();
+    this.generateResult();
 
     // console.log("Loading image...");
 
@@ -177,7 +177,7 @@ class UploadImage extends Component {
           </div>
         ) : (
             <div className="body-wrapper card-wrapper">
-              <canvas ref="canvas" width={256} height={256} />
+              <canvas ref="canvas" width={256} height={256} style={{"display":"none"}}/>
               <input type="file" accept="image/*" capture="camera" onChange={this.onPhotoChange} />
               <button className="btn btn-success" onClick={(e) => this.pressButton(e)}>Predict</button>
             </div>
