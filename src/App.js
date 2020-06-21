@@ -13,13 +13,14 @@ import History from "./pages/History";
 import Result from "./pages/Result";
 
 class App extends Component {
-  state = {
-    navigate: false
-  };
+  constructor(props) {
+    super(props);
+  }
 
   logout() {
     const PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
     const auth_token = localStorage.getItem('auth-token');
+    // const { history } = this.props;
     // const history = useHistory();
 
     axios.delete(PROXY_URL + 'https://padi-bangkit.herokuapp.com/logout', {
@@ -33,8 +34,7 @@ class App extends Component {
         if (response.data.message === "Success") {
           localStorage.removeItem('auth-token');
           localStorage.removeItem('username');
-          // this.setState({navigate: true})
-          // history.push('/login');
+          this.props.history.push('/login');
         }
         else {
           console.log("Wrong message");
@@ -61,22 +61,29 @@ class App extends Component {
     return (<Router>
       <div className="App">
         <nav className="navbar navbar-expand-lg navbar-light fixed-top">
+          {
+            (localStorage.getItem('username') === null) ?
+              <Link className="navbar-brand" to={"/"}>PADI</Link> :
+              <Link className="navbar-brand" to={"/login"}>PADI</Link>
+          }
+          {/* <Link className="navbar-brand" to={"/"}>PADI</Link> */}
+          {(localStorage.getItem('username') !== null) ?
+            <div className="collapse navbar-collapse" id="navbarTogglerDemo02">
+              <ul className="navbar-nav ml-auto">
+                <li className="nav-item">
+                  <Link className="nav-link" to={"/history"}>History</Link>
+                </li>
+                <li className="dropdown nav-item">
+                  <a aria-expanded="false" aria-haspopup="true" className="dropdown-toggle nav-link" data-toggle="dropdown"
+                    href="" role="button">{localStorage.getItem('username')}<span className="caret"></span></a>
+                  <ul className="dropdown-menu">
+                    <a className="dropdown-item" onClick={this.logout}>Logout</a>
+                  </ul>
+                </li>
+              </ul>
+            </div> : <div className="collapse navbar-collapse" id="navbarTogglerDemo02">
+            </div>}
 
-          <Link className="navbar-brand" to={"/"}>PADI</Link>
-          <div className="collapse navbar-collapse" id="navbarTogglerDemo02">
-            <ul className="navbar-nav ml-auto">
-              <li className="nav-item">
-                <Link className="nav-link" to={"/history"}>History</Link>
-              </li>
-              <li className="dropdown nav-item">
-                <a aria-expanded="false" aria-haspopup="true" className="dropdown-toggle nav-link" data-toggle="dropdown"
-                  href="" role="button">Username<span className="caret"></span></a>
-                <ul className="dropdown-menu">
-                  <a className="dropdown-item" onClick={this.logout}>Logout</a>
-                </ul>
-              </li>
-            </ul>
-          </div>
         </nav>
 
         <Switch>
