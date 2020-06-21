@@ -17,6 +17,8 @@ class Login extends Component {
 
     onLogin = e => {
         e.preventDefault();
+        console.log("akan login");
+        console.log(localStorage.getItem("auth-token"));
         axios.post(this.PROXY_URL + 'https://padi-bangkit.herokuapp.com/login', { username: this.state.username, password: this.state.password })
             .then(response => {
                 // console.log("masuk");

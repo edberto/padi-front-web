@@ -12,9 +12,11 @@ class UploadImage extends Component {
       isLoading: false,
       img_url: null,
       img_predict: null,
+      image: null,
       models: null,
       isPredicted: false,
-      label: Math.floor(Math.random() * 4) + 1,
+      // label: Math.floor(Math.random() * 4) + 1,
+      label: 0,
       detailPrediction: {}
     };
     this.PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
@@ -25,7 +27,8 @@ class UploadImage extends Component {
     if (event.target.files && event.target.files[0]) {
       let img = event.target.files[0];
       this.setState({
-        img_predict: img
+        img_predict: img,
+        image: URL.createObjectURL(img)
       });
     }
   };
@@ -36,11 +39,55 @@ class UploadImage extends Component {
     this.setState({ models: loadModel });
   }
 
+  backButton = event => {
+    this.setState({
+      img_url: null,
+      img_predict: null,
+      image: null,
+      isPredicted: false,
+      label: 0,
+      detailPrediction: {}
+    });
+  };
+
   async pressButton(event) {
     event.preventDefault();
     console.log('Handle uploading-', this.state.img_predict);
 
-    // const canvas = this.ref.canvas;
+    const canvas = this.refs.canvas;
+    const ctx = canvas.getContext("2d");
+    const img = this.refs.image;
+    img.onload = () => {
+      ctx.drawImage(img, 0, 0)
+    }
+
+    let logits = tf.tidy(() => {
+      const normalizationConstant = 1.0 / 255.0;
+
+      let image_test = tf.browser.fromPixels(img, 3)
+        .resizeBilinear([256, 256], false)
+        .expandDims(0)
+        .toFloat()
+        .mul(normalizationConstant)
+
+      return this.state.models.predict(image_test);
+    });
+
+    console.log("berhasil");
+    console.log(logits);
+
+    const classes = await logits.data();
+
+    console.log('Predictions: ', classes);
+
+    let maxIndex = this.indexOfMax(classes);
+
+    this.setState({ label: maxIndex + 1 });
+
+    console.log("Set Label");
+    console.log(this.state.label);
+
+    this.generateResult(this.state.label)
 
     const uploadTask = storage.ref(`images/${this.state.img_predict.name}`).put(this.state.img_predict);
     uploadTask.on(
@@ -81,50 +128,28 @@ class UploadImage extends Component {
           });
       }
     )
-
-    // console.log(this.state.img_url)
-
-    // const canvas = this.refs.canvas
-    // const ctx = canvas.getContext("2d")
-    // const img = this.state.img_predict
-
-    // this.state.img_predict.onload = () => {
-    //   ctx.drawImage(this.state.img_predict, 0, 0, 256, 256)
-    // }
-
-    // console.log(img);
-
-    // let logits = tf.tidy(() => {
-    //   const normalizationConstant = 1.0 / 255.0;
-
-    //   let image_test = tf.browser.fromPixels(this.state.img_predict, 1)
-    //     .resizeBilinear([256, 256], false)
-    //     .expandDims(0)
-    //     .toFloat()
-    //     .mul(normalizationConstant)
-
-    //   return this.state.models.predict(image_test);
-    // });
-
-    // console.log(logits);
-    this.generateResult();
-
-    // console.log("Loading image...");
-
-    // let tensor = tf.browser.fromPixels(this.state.image, 3)
-    //   .resizeNearestNeighbor([256, 256])
-    //   .toFloat()
-    //   .reverse(-1);
-    // let predictions = await this.state.MODEL.predict(tensor).data();
-    // console.log(predictions);
   };
 
-  insertPredicton(){
+  indexOfMax(arr) {
+    if (arr.length === 0) {
+      return -1;
+    }
 
+    var max = arr[0];
+    var maxIndex = 0;
+
+    for (var i = 1; i < arr.length; i++) {
+      if (arr[i] > max) {
+        maxIndex = i;
+        max = arr[i];
+      }
+    }
+
+    return maxIndex;
   }
 
-  async generateResult() {
-    axios.get(this.PROXY_URL + 'https://padi-bangkit.herokuapp.com/condition/' + this.state.label, {
+  async generateResult(label) {
+    axios.get(this.PROXY_URL + 'https://padi-bangkit.herokuapp.com/condition/' + label, {
       headers: {
         Authorization: 'Bearer ' + localStorage.getItem('auth-token')
       }
@@ -171,15 +196,21 @@ class UploadImage extends Component {
                   <p>{detailPrediction.solution}</p>
                   <h6>Prevention</h6>
                   <p>{detailPrediction.prevention}</p>
+                  <button type="submit" className="btn btn-success" onClick={(e) => this.backButton(e)}>Back to Homepage</button>
                 </div>
               </div>
             </div>
           </div>
         ) : (
             <div className="body-wrapper card-wrapper">
-              <canvas ref="canvas" width={256} height={256} style={{"display":"none"}}/>
-              <input type="file" accept="image/*" capture="camera" onChange={this.onPhotoChange} />
-              <button className="btn btn-success" onClick={(e) => this.pressButton(e)}>Predict</button>
+              <div className="row">
+                <canvas ref="canvas" width={256} height={256} style={{ "display": "none" }} />
+                <input type="file" accept="image/*" capture="camera" onChange={this.onPhotoChange} />
+                <button className="btn btn-success" onClick={(e) => this.pressButton(e)}>Predict</button>
+              </div>
+              <div className="row">
+                <img ref="image" src={this.state.image} style={{ "display": "none" }} />
+              </div>
             </div>
           )}
       </div>
