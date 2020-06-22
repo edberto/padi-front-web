@@ -63,21 +63,21 @@ class App extends Component {
         <nav className="navbar navbar-expand-lg navbar-light fixed-top">
           {
             (localStorage.getItem('username') === null) ?
-              <Link className="navbar-brand" to={"/"}>PADI</Link> :
-              <Link className="navbar-brand" to={"/login"}>PADI</Link>
+              <Link className="navbar-brand" to={"/login"}>PADI</Link> :
+              <Link className="navbar-brand" to={"/predict"}>PADI</Link>
           }
           {/* <Link className="navbar-brand" to={"/"}>PADI</Link> */}
           {(localStorage.getItem('username') !== null) ?
             <div className="collapse navbar-collapse" id="navbarTogglerDemo02">
               <ul className="navbar-nav ml-auto">
                 <li className="nav-item">
-                  <Link className="nav-link" to={"/history"}>History</Link>
+                  <Link className="nav-link" to={"/history"}>Riwayat</Link>
                 </li>
                 <li className="dropdown nav-item">
                   <a aria-expanded="false" aria-haspopup="true" className="dropdown-toggle nav-link" data-toggle="dropdown"
                     href="" role="button">{localStorage.getItem('username')}<span className="caret"></span></a>
                   <ul className="dropdown-menu">
-                    <a className="dropdown-item" onClick={this.logout}>Logout</a>
+                    <a className="dropdown-item" onClick={this.logout}>Keluar</a>
                   </ul>
                 </li>
               </ul>
@@ -87,7 +87,8 @@ class App extends Component {
         </nav>
 
         <Switch>
-          <Route exact path='/' component={UploadImage} />
+          <Route exact path='/' component={Login} />
+          <Route path="/predict" component={UploadImage} />
           <Route path="/login" component={Login} />
           <Route path="/register" component={SignUp} />
           <Route path="/history" component={History} />
@@ -99,7 +100,7 @@ class App extends Component {
         </Switch>
 
         <div className="footer">
-          <p>&#169; Made by Rio, Edbert, and Josua</p>
+          <p>&#169; Dibuat oleh Grup JKT-3A</p>
         </div>
 
       </div></Router>

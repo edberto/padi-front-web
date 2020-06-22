@@ -29,7 +29,7 @@ class Login extends Component {
                     localStorage.setItem('username', this.state.username);
                     // console.log("XXXXXX");
                     // console.log(localStorage.getItem('auth-token'));
-                    this.props.history.push('/');
+                    this.props.history.push('/predict');
                 }
                 else {
                     console.log("Wrong message");
@@ -47,23 +47,23 @@ class Login extends Component {
             <div className="auth-wrapper">
                 <div className="auth-inner">
                     <form onSubmit={this.onLogin}>
-                        <h4>Sign In</h4>
+                        <h4>Login</h4>
 
                         <div className="form-group">
                             <label>Username</label>
                             <input type="text" className="form-control" name="username"
-                                placeholder="Enter username" value={username} onChange={this.changeHandler} />
+                                placeholder="Masukkan username" value={username} onChange={this.changeHandler} />
                         </div>
 
                         <div className="form-group">
                             <label>Password</label>
                             <input type="password" className="form-control" name="password"
-                                placeholder="Enter password" value={password} onChange={this.changeHandler} />
+                                placeholder="Masukkan password" value={password} onChange={this.changeHandler} />
                         </div>
 
-                        <button type="submit" className="btn btn-success btn-block">Submit</button>
+                        <button type="submit" className="btn btn-success btn-block">Masuk</button>
                         <p className="forgot-password text-right">
-                            Don't have an account? <a href="/register">Enter</a>
+                            Belum mempunyai akun? <a href="/register">Registrasi</a>
                         </p>
                     </form>
                 </div>

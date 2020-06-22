@@ -185,18 +185,18 @@ class UploadImage extends Component {
             <div className="container col-md-4 py-5 card-inner">
               <div className="card">
                 <div className="card-header">
-                  <h4 className="mb-0">Result</h4>
+                  <h4 className="mb-0">Hasil</h4>
                 </div>
                 <div className="card-body">
                   <img src={this.state.img_url} className="card-img-top" />
                   <p>{detailPrediction.label}</p>
-                  <h6>Effect</h6>
+                  <h6>Efek</h6>
                   <p>{detailPrediction.effect}</p>
-                  <h6>Solution</h6>
+                  <h6>Solusi</h6>
                   <p>{detailPrediction.solution}</p>
-                  <h6>Prevention</h6>
+                  <h6>Pencegahan</h6>
                   <p>{detailPrediction.prevention}</p>
-                  <button type="submit" className="btn btn-success" onClick={(e) => this.backButton(e)}>Back to Homepage</button>
+                  <button type="submit" className="btn btn-success" onClick={(e) => this.backButton(e)}>Kembali ke Halaman Utama</button>
                 </div>
               </div>
             </div>
@@ -206,7 +206,7 @@ class UploadImage extends Component {
               <div className="row">
                 <canvas ref="canvas" width={256} height={256} style={{ "display": "none" }} />
                 <input type="file" accept="image/*" capture="camera" onChange={this.onPhotoChange} />
-                <button className="btn btn-success" onClick={(e) => this.pressButton(e)}>Predict</button>
+                <button className="btn btn-success" onClick={(e) => this.pressButton(e)}>Prediksi</button>
               </div>
               <div className="row">
                 <img ref="image" src={this.state.image} style={{ "display": "none" }} />

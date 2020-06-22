@@ -40,23 +40,23 @@ export default class SignUp extends Component {
             <div className="auth-wrapper">
                 <div className="auth-inner">
                     <form onSubmit={this.onRegister}>
-                        <h4>Sign Up</h4>
+                        <h4>Registrasi</h4>
 
                         <div className="form-group">
                             <label>Username</label>
                             <input type="text" className="form-control" name="username"
-                                placeholder="Enter username" value={username} onChange={this.changeHandler} />
+                                placeholder="Masukkan username" value={username} onChange={this.changeHandler} />
                         </div>
 
                         <div className="form-group">
                             <label>Password</label>
                             <input type="password" className="form-control" name="password"
-                                placeholder="Enter password" value={password} onChange={this.changeHandler} />
+                                placeholder="Masukkan password" value={password} onChange={this.changeHandler} />
                         </div>
 
-                        <button type="submit" className="btn btn-success btn-block">Sign Up</button>
+                        <button type="submit" className="btn btn-success btn-block">Daftar</button>
                         <p className="forgot-password text-right">
-                            Already have an account? <a href="/login">Enter</a>
+                            Sudah mempuyai akun? <a href="/login">Login</a>
                         </p>
                     </form>
                 </div>
